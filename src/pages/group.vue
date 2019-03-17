@@ -1,7 +1,10 @@
 <template>
     <el-container style="width:100%;max-width:500px;margin:0 auto">
         <el-header>
-            <span style="font-size: 30px">账目详情</span>
+            <el-breadcrumb style="margin-top:10px;font-size:30px" separator-class="el-icon-arrow-right">
+                <el-breadcrumb-item><a href="./">账目组</a></el-breadcrumb-item>
+                <el-breadcrumb-item>账目详情</el-breadcrumb-item>
+            </el-breadcrumb>
         </el-header>
         <el-main>
             <el-card shadow="hover">
@@ -25,7 +28,7 @@
                                        :value="it.partId"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="参与者" style="margin-bottom: 0px"></el-form-item>
+                    <el-form-item label="参与者" style="margin-bottom: 0"></el-form-item>
                     <el-row :key="index" v-for="(item,index) in ruleForm.parts">
                         <el-col :span="12">
                             <el-form-item class="grid-content"
@@ -39,7 +42,7 @@
                         <el-col :span="12">
                             <el-form-item class="grid-content" :prop="'parts.'+index+'.amount'"
                                           :rules="newRules.amount">
-                                <el-input v-model.number="item.amount" placeholder="金额（分）"></el-input>
+                                <el-input v-model="item.amount" placeholder="金额（元）"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -53,21 +56,32 @@
                 </el-form>
             </el-card>
             <el-card shadow="hover">
-                <el-alert v-if="info2" type="success">
-                    {{info2}}
-                </el-alert>
-                <el-table v-if="details" :data="details" stripe style="width:100%;margin-bottom: 10px">
-                    <el-table-column prop="name" label="参与者"></el-table-column>
-                    <el-table-column prop="paid" label="总付款"></el-table-column>
-                    <el-table-column prop="total" label="总消费"></el-table-column>
-                </el-table>
-                <el-table v-if="pays" :data="pays" stripe style="width:100%;margin-bottom: 10px">
-                    <el-table-column prop="f" label="支付者"></el-table-column>
-                    <el-table-column prop="t" label="收款者"></el-table-column>
-                    <el-table-column prop="amount" label="金额"></el-table-column>
-                </el-table>
-                <el-button @click="cal()">清算</el-button>
-                <el-button @click="lock0()">销账</el-button>
+                <el-form>
+                    <el-form-item>
+                        <el-alert v-if="info2" type="success">
+                            {{info2}}
+                        </el-alert>
+                    </el-form-item>
+                    <el-form-item v-if="details" label="账目明细">
+                        <el-table :data="details" stripe style="width:100%">
+                            <el-table-column prop="name" label="参与者"></el-table-column>
+                            <el-table-column prop="paid" label="总付款"></el-table-column>
+                            <el-table-column prop="total" label="总消费"></el-table-column>
+                        </el-table>
+                    </el-form-item>
+
+                    <el-form-item v-if="pays" label="最优清账方案">
+                        <el-table :data="pays" stripe style="width:100%">
+                            <el-table-column prop="f" label="支付者"></el-table-column>
+                            <el-table-column prop="t" label="收款者"></el-table-column>
+                            <el-table-column prop="amount" label="金额"></el-table-column>
+                        </el-table>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button @click="cal()">清算</el-button>
+                        <el-button @click="lock0()">销账</el-button>
+                    </el-form-item>
+                </el-form>
             </el-card>
             <el-row :key="debt.debtId" v-for="debt in qaq">
                 <el-card shadow="hover">
@@ -105,7 +119,7 @@
                     parts: [{required: true, message: '请选择参与者', trigger: 'blur'}],
                     amount: [
                         {required: true, message: '请输入金额', trigger: 'blur'},
-                        {type: 'number', message: '请输入有效的金额', trigger: 'blur'}
+                        {validator: this.valNum, message: '请输入有效的金额', trigger: 'blur'}
                     ]
                 },
                 ruleForm: {
@@ -120,6 +134,11 @@
             this.refresh()
         },
         methods: {
+            valNum(rule, value, callback) {
+                if (!/^[0-9.]+$/.test(value))
+                    return callback(new Error("Not a number"))
+                return callback()
+            },
             lock0() {
                 this.axios.post("/api/aa/lock", {groupId: this.groupId, locked: true}).then((response) => {
                     console.log(response)
@@ -157,11 +176,16 @@
             newDebt(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
+                        let parts = [];
+                        this.ruleForm.parts.forEach(e => parts.push({
+                            partId: e.partId,
+                            amount: Math.floor(Number(e.amount) * 100)
+                        }))
                         this.axios.post('/api/aa/add', {
                             'groupId': this.groupId,
                             'name': this.ruleForm.name,
                             'payerId': this.ruleForm.payer,
-                            'details': this.ruleForm.parts
+                            'details': parts
                         }).then((response) => {
                             console.log(response)
                             this.refresh()
@@ -179,11 +203,11 @@
                 this.axios.post("/api/aa/cal", {groupId: this.groupId}).then((response) => {
                     this.details = []
                     response.data.detail.forEach((e) => {
-                        this.details.push({name: e.name, paid: e.paid, total: e.total})
+                        this.details.push({name: e.name, paid: e.paid / 100, total: e.total / 100})
                     })
                     this.pays = []
                     response.data.pay.forEach((e) => {
-                        this.pays.push({f: e.from.name, t: e.to.name, amount: e.amount})
+                        this.pays.push({f: e.from.name, t: e.to.name, amount: e.amount / 100})
                     })
                 })
             }

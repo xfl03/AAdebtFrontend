@@ -1,7 +1,9 @@
 <template>
     <el-container style="width:100%;max-width:500px;margin:0 auto">
         <el-header>
-            <span style="font-size: 30px">账目组</span>
+            <el-breadcrumb style="margin-top:10px;font-size:30px" separator-class="el-icon-arrow-right">
+                <el-breadcrumb-item>账目组</el-breadcrumb-item>
+            </el-breadcrumb>
         </el-header>
         <el-main>
             <el-card shadow="hover">
@@ -19,7 +21,8 @@
                     <el-form-item label="账目组名称" prop="name">
                         <el-input v-model="ruleForm.name" placeholder="名称"></el-input>
                     </el-form-item>
-                    <el-form-item :key="index" v-for="(item,index) in ruleForm.parts" :label="'参与者'+(index+1)"
+                    <el-form-item label="参与者" style="margin-bottom: 0px"></el-form-item>
+                    <el-form-item :key="index" v-for="(item,index) in ruleForm.parts"
                                   :prop="'parts.'+index+'.name'" :rules="newRules.parts">
                         <el-input v-model="item.name" placeholder="参与者名称"></el-input>
                     </el-form-item>
@@ -29,6 +32,19 @@
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="newGroup('ruleForm')">新建账目组</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-card>
+            <el-card shadow="hover">
+                <el-form>
+                    <el-form-item label="筛选器">
+                        <el-switch
+                                @change="filterLockedChange"
+                                style="width:100%"
+                                v-model="filterLocked"
+                                active-text="仅未销账"
+                                inactive-text="显示全部">
+                        </el-switch>
                     </el-form-item>
                 </el-form>
             </el-card>
@@ -57,9 +73,11 @@
         },
         data() {
             return {
+                filterLocked: false,
                 err: null,
                 info: null,
                 qaq: [],
+                qwq: [],
                 ruleForm: {
                     name: null,
                     parts: [{name: ""}, {name: ""}]
@@ -73,12 +91,14 @@
             }
         },
         mounted() {
+            this.filterLocked = localStorage.filterLocked === "true"
             this.refresh()
         },
         methods: {
             refresh() {
                 this.axios.get("/api/aa/list").then((response) => {
-                    this.qaq = response.data.groups
+                    this.qwq = response.data.groups
+                    this.filterLockedChange()
                 })
             },
             newGroup(formName) {
@@ -115,6 +135,15 @@
                     return
                 }
                 this.ruleForm.parts.splice(this.ruleForm.parts.length - 1, 1)
+            },
+            filterLockedChange() {
+                localStorage.filterLocked = this.filterLocked
+                this.qaq = []
+                this.qwq.forEach(e => {
+                    if (!this.filterLocked || !e.locked) {
+                        this.qaq.push(e)
+                    }
+                })
             }
         }
     }
