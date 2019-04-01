@@ -17,6 +17,12 @@ module.exports = {
             template: 'public/index.html',
             title: 'group',
             filename: 'group.html'
+        },
+        normal: {
+            entry: 'src/pages/normal.js',
+            template: 'public/index.html',
+            title: 'group',
+            filename: 'normal.html'
         }
     },
     devServer: {
