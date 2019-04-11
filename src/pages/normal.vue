@@ -23,7 +23,7 @@
                         <el-input v-model="ruleForm.name" placeholder="名称"></el-input>
                     </el-form-item>
                     <el-form-item label="账目类别" prop="type">
-                        <el-select style="width:100%" v-model="ruleForm.type" placeholder="请选择类别">
+                        <el-select @change="onchange" style="width:100%" v-model="ruleForm.type" placeholder="请选择类别">
                             <el-option v-for="(it,index) in qwq" :key="index" :label="it"
                                        :value="index"></el-option>
                         </el-select>
@@ -43,7 +43,8 @@
                             {{info2}}
                         </el-alert>
                     </el-form-item>
-                    <el-form-item v-if="details" :label="'总消费：'+details.total+' / 日均消费：'+details.average"></el-form-item>
+                    <el-form-item v-if="details"
+                                  :label="'总消费：'+details.total+' / 日均消费：'+details.average"></el-form-item>
                     <el-form-item v-if="details" label="日消费">
                         <el-table :data="details.dates" stripe style="width:100%">
                             <el-table-column prop="date" label="日期"></el-table-column>
@@ -131,7 +132,7 @@
             newDebt(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        let amount = Math.floor(Number(this.ruleForm.amount) * 100)
+                        let amount = Math.round(Number(this.ruleForm.amount) * 100)
                         this.axios.post('/api/debt/add', {
                             'groupId': this.groupId,
                             'name': this.ruleForm.name,
@@ -155,14 +156,18 @@
                     this.details = response.data
                     this.details.types.forEach(it => {
                         it.typename = this.qwq[it.type]
-                        it.amount/=100
+                        it.amount /= 100
                     })
                     this.details.dates.forEach(it => {
-                        it.amount/=100
+                        it.amount /= 100
                     })
-                    this.details.total/=100
-                    this.details.average/=100
+                    this.details.total /= 100
+                    this.details.average /= 100
                 })
+            },
+            onchange() {
+                if (this.ruleForm.name != null) return
+                this.ruleForm.name = this.qwq[this.ruleForm.type]
             }
         }
 

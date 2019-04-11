@@ -179,7 +179,7 @@
                         let parts = [];
                         this.ruleForm.parts.forEach(e => parts.push({
                             partId: e.partId,
-                            amount: Math.floor(Number(e.amount) * 100)
+                            amount: Math.round(Number(e.amount) * 100)
                         }))
                         this.axios.post('/api/aa/add', {
                             'groupId': this.groupId,
