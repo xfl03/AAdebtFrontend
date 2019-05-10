@@ -64,14 +64,20 @@
                     </el-form-item>
                     <el-form-item>
                         <el-button @click="cal()">清算</el-button>
-                    </el-form-item>
+                    </el-form-item><el-form-item label="筛选器">
+                    <el-switch
+                            style="width:100%"
+                            v-model="filterMod"
+                            active-text="编辑模式">
+                    </el-switch>
+                </el-form-item>
                 </el-form>
             </el-card>
             <el-row :key="debt.debtId" v-for="debt in qaq">
                 <el-card shadow="hover">
                     <div style="padding: 14px;">
                         <span style="font-size:20px">{{debt.name}}</span>
-                        <span class="right-top" @click='del(debt.debtId)'>删除</span>
+                        <span v-if="filterMod" class="right-top" @click='del(debt.debtId)'>删除</span>
                         <div class="bottom clearfix">
                             <span class="locked" style="color:#67C23A">{{debt.date}} {{qwq[debt.type]}}</span>
                             <span class="button">金额： {{debt.amount/100.0}}</span>
@@ -114,7 +120,8 @@
                     amount: null,
                     type: null,
                     date: new Date()
-                }
+                },
+                filterMod:false
             }
         },
         mounted() {
