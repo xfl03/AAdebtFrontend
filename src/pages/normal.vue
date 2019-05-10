@@ -31,6 +31,10 @@
                     <el-form-item label="账目金额" prop="amount">
                         <el-input v-model="ruleForm.amount" placeholder="金额"></el-input>
                     </el-form-item>
+                    <el-form-item label="账目日期" prop="date">
+                        <el-date-picker v-model="ruleForm.date" style="width:100%" type="date"
+                                        placeholder="日期"></el-date-picker>
+                    </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="newDebt('ruleForm')">新建账目</el-button>
                     </el-form-item>
@@ -67,6 +71,7 @@
                 <el-card shadow="hover">
                     <div style="padding: 14px;">
                         <span style="font-size:20px">{{debt.name}}</span>
+                        <span class="right-top" @click='del(debt.debtId)'>删除</span>
                         <div class="bottom clearfix">
                             <span class="locked" style="color:#67C23A">{{debt.date}} {{qwq[debt.type]}}</span>
                             <span class="button">金额： {{debt.amount/100.0}}</span>
@@ -101,12 +106,14 @@
                     amount: [
                         {required: true, message: '请输入金额', trigger: 'blur'},
                         {validator: this.valNum, message: '请输入有效的金额', trigger: 'blur'}
-                    ]
+                    ],
+                    date: [{required: true, message: '请选择日期', trigger: 'blur'}]
                 },
                 ruleForm: {
                     name: null,
                     amount: null,
-                    type: null
+                    type: null,
+                    date: new Date()
                 }
             }
         },
@@ -137,12 +144,18 @@
                             'groupId': this.groupId,
                             'name': this.ruleForm.name,
                             'type': this.ruleForm.type,
-                            'amount': amount
+                            'amount': amount,
+                            'date': this.$moment(this.ruleForm.date).format("YYYY-MM-DD")
                         }).then((response) => {
                             console.log(response)
                             this.refresh()
                             this.err = null
                             this.info = '已添加'
+
+                            this.groupId = null
+                            this.ruleForm.name = null
+                            this.ruleForm.type = null
+                            this.ruleForm.amount = null
                         }).catch((error) => {
                             console.log(error)
                             this.err = '内部错误'
@@ -168,6 +181,11 @@
             onchange() {
                 if (this.ruleForm.name != null) return
                 this.ruleForm.name = this.qwq[this.ruleForm.type]
+            },
+            del(debtId) {
+                this.axios.post("/api/debt/del", {groupId: this.groupId, debtId: debtId}).then(() => {
+                    this.refresh()
+                })
             }
         }
 
@@ -191,5 +209,14 @@
         float: right;
         color: #409EFF;
         text-decoration: blink;
+    }
+
+    .right-top {
+        padding: 0;
+        float: right;
+        color: #ff4d51;
+        text-decoration: blink;
+        font-size: 15px;
+
     }
 </style>

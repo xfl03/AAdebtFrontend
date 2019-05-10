@@ -3,6 +3,7 @@ import '../plugins/element.js'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import normal from './normal.vue'
+import VueMoment from 'vue-moment'
 //import VueRouter from 'vue-router'
 
 axios.interceptors.request.use(
@@ -32,6 +33,7 @@ axios.interceptors.response.use(
 
 Vue.use(VueAxios, axios)
 //Vue.use(VueRouter)
+Vue.use(VueMoment);
 
 Vue.config.productionTip = false
 
