@@ -159,10 +159,10 @@
                             this.err = null
                             this.info = '已添加'
 
-                            this.groupId = null
                             this.ruleForm.name = null
                             this.ruleForm.type = null
                             this.ruleForm.amount = null
+                            this.ruleForm.date = new Date()
                         }).catch((error) => {
                             console.log(error)
                             this.err = '内部错误'
