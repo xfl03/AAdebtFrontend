@@ -5,11 +5,6 @@
         </el-header>
         <el-main>
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
-                <el-form-item v-if="err">
-                    <el-alert type="error">
-                        {{err}}
-                    </el-alert>
-                </el-form-item>
                 <el-form-item label="邮箱" prop="email">
                     <el-input v-model="ruleForm.email" placeholder="邮箱"></el-input>
                 </el-form-item>
@@ -36,7 +31,6 @@
         },
         data() {
             return {
-                err: null,
                 qaq: null,
                 reg: false,
                 ruleForm: {
@@ -55,7 +49,7 @@
             }
         },
         mounted() {
-            //
+            document.title = '登录 - AA记账'
         },
         methods: {
             login0(formName) {
@@ -96,7 +90,11 @@
                             window.location.href = './'
                         }).catch((error) => {
                             console.log(error)
-                            this.err = '内部错误'
+                            this.$message({
+                                showClose: true,
+                                type: 'error',
+                                message: '内部错误'
+                            })
                         })
                     }
                 });

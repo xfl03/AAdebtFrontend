@@ -1,100 +1,90 @@
 <template>
-    <el-container style="width:100%;max-width:500px;margin:0 auto">
+    <el-container style="width:100%;max-width:1000px;margin:0 auto">
         <el-header>
             <el-breadcrumb style="margin-top:10px;font-size:30px" separator-class="el-icon-arrow-right">
                 <el-breadcrumb-item><a href="./">账目组</a></el-breadcrumb-item>
-                <el-breadcrumb-item>账目详情</el-breadcrumb-item>
+                <el-breadcrumb-item>{{name}}</el-breadcrumb-item>
             </el-breadcrumb>
         </el-header>
-        <el-main>
-            <el-card shadow="hover">
-                <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
-                    <el-form-item v-if="err">
-                        <el-alert type="error">
-                            {{err}}
-                        </el-alert>
-                    </el-form-item>
-                    <el-form-item v-if="info">
-                        <el-alert type="success">
-                            {{info}}
-                        </el-alert>
-                    </el-form-item>
-                    <el-form-item label="账目名称" prop="name">
-                        <el-input v-model="ruleForm.name" placeholder="名称"></el-input>
-                    </el-form-item>
-                    <el-form-item label="付款者" prop="payer">
-                        <el-select style="width:100%" v-model="ruleForm.payer" placeholder="请选择付款者">
-                            <el-option v-for="it in qwq" :key="it.partId" :label="it.name"
-                                       :value="it.partId"></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="参与者" style="margin-bottom: 0"></el-form-item>
-                    <el-row :key="index" v-for="(item,index) in ruleForm.parts">
-                        <el-col :span="12">
-                            <el-form-item class="grid-content"
-                                          :prop="'parts.'+index+'.partId'" :rules="newRules.parts">
-                                <el-select v-model="item.partId" placeholder="请选择参与者">
-                                    <el-option v-for="it in qwq" :key="it.partId" :label="it.name"
-                                               :value="it.partId"></el-option>
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="12">
-                            <el-form-item class="grid-content" :prop="'parts.'+index+'.amount'"
-                                          :rules="newRules.amount">
-                                <el-input v-model="item.amount" placeholder="金额（元）"></el-input>
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
-                    <el-form-item>
-                        <el-button @click="addParts()">增加参与者</el-button>
-                        <el-button @click="removeParts()">减少参与者</el-button>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" @click="newDebt('ruleForm')">新建账目</el-button>
-                    </el-form-item>
-                </el-form>
-            </el-card>
-            <el-card shadow="hover">
-                <el-form>
-                    <el-form-item>
-                        <el-alert v-if="info2" type="success">
-                            {{info2}}
-                        </el-alert>
-                    </el-form-item>
-                    <el-form-item v-if="details" label="账目明细">
-                        <el-table :data="details" stripe style="width:100%">
-                            <el-table-column prop="name" label="参与者"></el-table-column>
-                            <el-table-column prop="paid" label="总付款"></el-table-column>
-                            <el-table-column prop="total" label="总消费"></el-table-column>
-                        </el-table>
-                    </el-form-item>
-
-                    <el-form-item v-if="pays" label="最优清账方案">
-                        <el-table :data="pays" stripe style="width:100%">
-                            <el-table-column prop="f" label="支付者"></el-table-column>
-                            <el-table-column prop="t" label="收款者"></el-table-column>
-                            <el-table-column prop="amount" label="金额"></el-table-column>
-                        </el-table>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button @click="cal()">清算</el-button>
-                        <el-button @click="lock0()">销账</el-button>
-                    </el-form-item>
-                </el-form>
-            </el-card>
-            <el-row :key="debt.debtId" v-for="debt in qaq">
+        <el-container style="flex-wrap:wrap">
+            <el-main class="main" style="padding-bottom: 0">
                 <el-card shadow="hover">
-                    <div style="padding: 14px;">
-                        <span style="font-size:20px">{{debt.name}}</span>
-                        <div class="bottom clearfix">
-                            <span class="locked" style="color:#67C23A">付款者： {{debt.payer.name}}</span>
-                            <span class="button">总金额： {{debt.amount/100.0}}</span>
-                        </div>
-                    </div>
+                    <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
+                        <el-form-item label="账目名称" prop="name">
+                            <el-input v-model="ruleForm.name" placeholder="名称"></el-input>
+                        </el-form-item>
+                        <el-form-item label="付款者" prop="payer">
+                            <el-select style="width:100%" v-model="ruleForm.payer" placeholder="请选择付款者">
+                                <el-option v-for="it in qwq" :key="it.partId" :label="it.name"
+                                           :value="it.partId"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="参与者" style="margin-bottom: 0"></el-form-item>
+                        <el-row :key="index" v-for="(item,index) in ruleForm.parts">
+                            <el-col :span="12">
+                                <el-form-item class="grid-content"
+                                              :prop="'parts.'+index+'.partId'" :rules="newRules.parts">
+                                    <el-select v-model="item.partId" placeholder="请选择参与者">
+                                        <el-option v-for="it in qwq" :key="it.partId" :label="it.name"
+                                                   :value="it.partId"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item class="grid-content" :prop="'parts.'+index+'.amount'"
+                                              :rules="newRules.amount">
+                                    <el-input v-model="item.amount" placeholder="金额（元）"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-form-item>
+                            <el-button @click="addParts()">增加参与者</el-button>
+                            <el-button @click="removeParts()">减少参与者</el-button>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="newDebt('ruleForm')">新建账目</el-button>
+                        </el-form-item>
+                    </el-form>
                 </el-card>
-            </el-row>
-        </el-main>
+                <el-card shadow="hover">
+                    <el-form>
+                        <el-form-item>
+                            <el-button @click="cal()">清算</el-button>
+                            <el-button @click="lock0()">销账</el-button>
+                        </el-form-item>
+                        <el-form-item v-if="details" label="账目明细">
+                            <el-table :data="details" stripe style="width:100%">
+                                <el-table-column prop="name" label="参与者"></el-table-column>
+                                <el-table-column prop="paid" label="总付款"></el-table-column>
+                                <el-table-column prop="total" label="总消费"></el-table-column>
+                            </el-table>
+                        </el-form-item>
+
+                        <el-form-item v-if="pays" label="最优清账方案">
+                            <el-table :data="pays" stripe style="width:100%">
+                                <el-table-column prop="f" label="支付者"></el-table-column>
+                                <el-table-column prop="t" label="收款者"></el-table-column>
+                                <el-table-column prop="amount" label="金额"></el-table-column>
+                            </el-table>
+                        </el-form-item>
+                    </el-form>
+                </el-card>
+            </el-main>
+            <el-main class="main" style="padding-top: 0">
+                <el-row :key="debt.debtId" v-for="debt in qaq">
+                    <el-card shadow="hover">
+                        <div style="padding: 14px;">
+                            <span style="font-size:20px">{{debt.name}}</span>
+                            <div class="bottom clearfix">
+                                <span class="locked" style="color:#67C23A">付款者： {{debt.payer.name}}</span>
+                                <span class="button">总金额： {{debt.amount/100.0}}</span>
+                            </div>
+                        </div>
+                    </el-card>
+                </el-row>
+            </el-main>
+        </el-container>
+        <el-backtop></el-backtop>
     </el-container>
 </template>
 
@@ -103,9 +93,6 @@
         name: "group",
         data() {
             return {
-                err: null,
-                info: null,
-                info2: null,
                 groupId: 0,
                 qaq: [],
                 qwq: [],
@@ -126,7 +113,8 @@
                     name: null,
                     payer: null,
                     parts: [{partId: null, amount: null}]
-                }
+                },
+                name: '账目详情'
             }
         },
         mounted() {
@@ -142,34 +130,50 @@
             lock0() {
                 this.axios.post("/api/aa/lock", {groupId: this.groupId, locked: true}).then((response) => {
                     console.log(response)
-                    this.info2 = '已销账'
+                    this.$message({
+                        showClose: true,
+                        type: 'success',
+                        message: '已销账'
+                    })
                 })
             },
             refresh() {
                 this.axios.post("/api/aa/debt", {groupId: this.groupId}).then((response) => {
                     if (response.data.code < 0) {
-                        this.err = '无访问权限'
+                        this.$message({
+                            showClose: true,
+                            type: 'error',
+                            message: '无访问权限'
+                        })
                         return
                     }
                     this.qaq = response.data.debts
+                    if (response.data.name) this.name = response.data.name
+                    document.title = this.name + ' - AA记账'
                 })
                 this.axios.post("/api/aa/part", {groupId: this.groupId}).then((response) => {
                     if (response.data.code < 0) {
-                        this.err = '无访问权限'
+                        this.$message({
+                            showClose: true,
+                            type: 'error',
+                            message: '无访问权限'
+                        })
                         return
                     }
                     this.qwq = response.data.parts
                 })
             },
             addParts() {
-                this.err = null
                 this.ruleForm.parts.push({partId: null, amount: null})
             },
             removeParts() {
                 if (this.ruleForm.parts.length <= 1) {
-                    this.err = '至少需要一位参与者'
-                    this.info = null
-                    return
+                    this.$message({
+                        showClose: true,
+                        type: 'error',
+                        message: '至少需要一位参与者'
+                    });
+                    return;
                 }
                 this.ruleForm.parts.splice(this.ruleForm.parts.length - 1, 1)
             },
@@ -189,12 +193,18 @@
                         }).then((response) => {
                             console.log(response)
                             this.refresh()
-                            this.err = null
-                            this.info = '已添加'
+                            this.$message({
+                                showClose: true,
+                                type: 'success',
+                                message: '已添加'
+                            })
                         }).catch((error) => {
                             console.log(error)
-                            this.err = '内部错误'
-                            this.info = null
+                            this.$message({
+                                showClose: true,
+                                type: 'error',
+                                message: '内部错误'
+                            })
                         })
                     }
                 });
@@ -233,5 +243,11 @@
         float: right;
         color: #409EFF;
         text-decoration: blink;
+    }
+
+    .main {
+        min-width: 350px;
+        max-width: 500px;
+        margin: 0 auto;
     }
 </style>
