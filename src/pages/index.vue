@@ -1,5 +1,5 @@
 <template>
-    <el-container style="width:100%;max-width:1000px;margin:0 auto">
+    <el-container class="page">
         <el-header>
             <el-breadcrumb style="margin-top:10px;font-size:30px" separator-class="el-icon-arrow-right">
                 <el-breadcrumb-item>账目组</el-breadcrumb-item>
@@ -55,18 +55,14 @@
                 </el-card>
                 <el-row :key="group.groupId" v-for="group in qaq">
                     <el-card shadow="hover">
-                        <div style="padding: 14px;">
-                            <span style="font-size:20px">{{group.name}}</span>
-                            <div class="bottom clearfix">
-                            <span class="locked" v-if="group.type === 0 && group.locked"
-                                  style="color:#67C23A">已销账</span>
-                                <span class="locked" v-if="group.type === 0 && !group.locked"
-                                      style="color:#F56C6C">未销账</span>
-                                <span class="locked" v-if="group.type === 1" style="color:#409EFF">普通记账</span>
-                                <a v-if="group.type === 0" :href="'./group.html?'+group.groupId"
-                                   class="button">查看账目详情</a>
-                                <a v-if="group.type === 1" :href="'./normal.html?'+group.groupId"
-                                   class="button">查看账目详情</a>
+                        <div style="padding: 14px;" class="card">
+                            <span class="top-left">{{group.name}}</span>
+                            <div class="bottom">
+                                <span class="bottom-left green" v-if="group.type === 0 && group.locked">已销账</span>
+                                <span class="bottom-left red" v-if="group.type === 0 && !group.locked">未销账</span>
+                                <span class="bottom-left blue" v-if="group.type === 1">普通记账</span>
+                                <a :href="'./'+(group.type === 0?'group':'normal')+'.html?'+group.groupId"
+                                   class="bottom-right blue">查看账目详情</a>
                             </div>
                         </div>
                     </el-card>
@@ -190,27 +186,7 @@
     }
 </script>
 
-<style>
-    .locked {
-        font-size: 13px;
-        color: #999;
-    }
-
-    .bottom {
-        margin-top: 13px;
-        line-height: 12px;
-    }
-
-    .button {
-        padding: 0;
-        float: right;
-        color: #409EFF;
-        text-decoration: blink;
-    }
-
-    .main {
-        min-width: 350px;
-        max-width: 500px;
-        margin: 0 auto;
-    }
+<style lang="stylus">
+    @import "../assets/main.styl"
+    @import "../assets/color.styl"
 </style>

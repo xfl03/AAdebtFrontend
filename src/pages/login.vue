@@ -1,5 +1,5 @@
 <template>
-    <el-container style="width:100%;max-width:500px;margin:0 auto">
+    <el-container class="lite-page">
         <el-header>
             <span style="font-size: 30px">登录</span>
         </el-header>
@@ -68,7 +68,11 @@
                             window.location.href = './'
                         }).catch((error) => {
                             console.log(error)
-                            this.err = '用户名或密码错误'
+                            this.$message({
+                                showClose: true,
+                                type: 'error',
+                                message: '用户名或密码错误'
+                            })
                         })
                     }
                 });
@@ -103,6 +107,6 @@
     }
 </script>
 
-<style scoped>
-
+<style lang="stylus">
+    @import "../assets/main.styl"
 </style>

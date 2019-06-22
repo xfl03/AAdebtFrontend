@@ -1,5 +1,5 @@
 <template>
-    <el-container style="width:100%;max-width:1000px;margin:0 auto">
+    <el-container class="page">
         <el-header>
             <el-breadcrumb style="margin-top:10px;font-size:30px" separator-class="el-icon-arrow-right">
                 <el-breadcrumb-item><a href="./">账目组</a></el-breadcrumb-item>
@@ -69,12 +69,12 @@
                 </el-card>
                 <el-row :key="debt.debtId" v-for="debt in qaq">
                     <el-card shadow="hover">
-                        <div style="padding: 14px;">
-                            <span style="font-size:20px">{{debt.name}}</span>
-                            <span v-if="filterMod" class="right-top" @click='del(debt.debtId)'>删除</span>
-                            <div class="bottom clearfix">
-                                <span class="locked" style="color:#67C23A">{{debt.date}} {{qwq[debt.type]}}</span>
-                                <span class="button">金额： {{debt.amount/100.0}}</span>
+                        <div style="padding: 14px;" class="card">
+                            <span class="top-left">{{debt.name}}</span>
+                            <span v-if="filterMod" class="top-right" @click='del(debt.debtId)'>删除</span>
+                            <div class="bottom">
+                                <span class="bottom-left green">{{debt.date}} {{qwq[debt.type]}}</span>
+                                <span class="bottom-right blue">金额： {{debt.amount/100.0}}</span>
                             </div>
                         </div>
                     </el-card>
@@ -216,36 +216,7 @@
     }
 </script>
 
-<style scoped>
-
-    .locked {
-        font-size: 15px;
-        color: #999;
-    }
-
-    .bottom {
-        margin-top: 13px;
-        line-height: 12px;
-    }
-
-    .button {
-        padding: 0;
-        float: right;
-        color: #409EFF;
-        text-decoration: blink;
-    }
-
-    .right-top {
-        padding: 0;
-        float: right;
-        color: #ff4d51;
-        text-decoration: blink;
-        font-size: 15px;
-    }
-
-    .main {
-        min-width: 350px;
-        max-width: 500px;
-        margin: 0 auto;
-    }
+<style lang="stylus">
+    @import "../assets/main.styl"
+    @import "../assets/color.styl"
 </style>

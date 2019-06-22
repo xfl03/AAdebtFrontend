@@ -1,5 +1,5 @@
 <template>
-    <el-container style="width:100%;max-width:1000px;margin:0 auto">
+    <el-container class="page">
         <el-header>
             <el-breadcrumb style="margin-top:10px;font-size:30px" separator-class="el-icon-arrow-right">
                 <el-breadcrumb-item><a href="./">账目组</a></el-breadcrumb-item>
@@ -73,11 +73,11 @@
             <el-main class="main" style="padding-top: 0">
                 <el-row :key="debt.debtId" v-for="debt in qaq">
                     <el-card shadow="hover">
-                        <div style="padding: 14px;">
-                            <span style="font-size:20px">{{debt.name}}</span>
-                            <div class="bottom clearfix">
-                                <span class="locked" style="color:#67C23A">付款者： {{debt.payer.name}}</span>
-                                <span class="button">总金额： {{debt.amount/100.0}}</span>
+                        <div style="padding: 14px;" class="card">
+                            <span class="top-left">{{debt.name}}</span>
+                            <div class="bottom">
+                                <span class="bottom-left green">付款者： {{debt.payer.name}}</span>
+                                <span class="bottom-right blue">总金额： {{debt.amount/100.0}}</span>
                             </div>
                         </div>
                     </el-card>
@@ -226,28 +226,7 @@
     }
 </script>
 
-<style scoped>
-
-    .locked {
-        font-size: 15px;
-        color: #999;
-    }
-
-    .bottom {
-        margin-top: 13px;
-        line-height: 12px;
-    }
-
-    .button {
-        padding: 0;
-        float: right;
-        color: #409EFF;
-        text-decoration: blink;
-    }
-
-    .main {
-        min-width: 350px;
-        max-width: 500px;
-        margin: 0 auto;
-    }
+<style lang="stylus">
+    @import "../assets/main.styl"
+    @import "../assets/color.styl"
 </style>
