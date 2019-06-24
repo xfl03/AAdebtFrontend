@@ -89,9 +89,17 @@
                             'email': this.ruleForm.email,
                             'password': this.ruleForm.password
                         }).then((response) => {
-                            console.log("SUCCESS")
-                            localStorage.token = response.data.token
-                            window.location.href = './'
+                            if (response.data.token) {
+                                console.log("SUCCESS")
+                                localStorage.token = response.data.token
+                                window.location.href = './'
+                            }else{
+                                this.$message({
+                                    showClose: true,
+                                    type: 'error',
+                                    message: '邮箱已被注册'
+                                })
+                            }
                         }).catch((error) => {
                             console.log(error)
                             this.$message({
