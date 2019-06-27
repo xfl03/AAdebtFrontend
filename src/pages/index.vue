@@ -1,9 +1,10 @@
 <template>
     <el-container class="page">
         <el-header>
-            <el-breadcrumb style="margin-top:10px;font-size:30px" separator-class="el-icon-arrow-right">
+            <el-breadcrumb style="margin-top:10px;font-size:30px;float:left" separator-class="el-icon-arrow-right">
                 <el-breadcrumb-item>账目组</el-breadcrumb-item>
             </el-breadcrumb>
+            <user></user>
         </el-header>
         <el-container style="flex-wrap:wrap">
             <el-main class="main" style="padding-bottom: 0">
@@ -74,11 +75,11 @@
 </template>
 
 <script>
-
+    import user from '../components/user'
     export default {
         name: 'App',
         components: {
-            //
+            user
         },
         data() {
             return {

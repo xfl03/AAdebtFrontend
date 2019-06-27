@@ -28,7 +28,9 @@
                                             placeholder="日期"></el-date-picker>
                         </el-form-item>
                         <el-form-item>
-                            <el-button type="primary" @click="newDebt('ruleForm')">新建账目</el-button>
+                            <el-button v-if="editing===0" type="primary" @click="newDebt('ruleForm')">新建账目</el-button>
+                            <el-button v-else type="primary" @click="editDebt('ruleForm')">修改账目</el-button>
+                            <el-button @click="clr()">重置</el-button>
                         </el-form-item>
                     </el-form>
                 </el-card>
@@ -71,7 +73,11 @@
                     <el-card shadow="hover">
                         <div style="padding: 14px;" class="card">
                             <span class="top-left">{{debt.name}}</span>
-                            <span v-if="filterMod" class="top-right" @click='del(debt.debtId)'>删除</span>
+                            <div v-if="filterMod" class="top-right">
+                                <span class="green" @click='edit(debt)'>编辑 </span>
+                                <span class="orange" @click='copy(debt)'>复制 </span>
+                                <span class="red" @click='del(debt.debtId)'>删除</span>
+                            </div>
                             <div class="bottom">
                                 <span class="bottom-left green">{{debt.date}} {{qwq[debt.type]}}</span>
                                 <span class="bottom-right blue">金额： {{debt.amount/100.0}}</span>
@@ -90,6 +96,7 @@
         name: "group",
         data() {
             return {
+                editing: 0,
                 groupId: 0,
                 qaq: [],
                 qwq: [
@@ -161,11 +168,7 @@
                                 type: 'success',
                                 message: '已添加'
                             })
-
-                            this.ruleForm.name = null
-                            this.ruleForm.type = null
-                            this.ruleForm.amount = null
-                            this.ruleForm.date = new Date()
+                            this.clr()
                         }).catch((error) => {
                             console.log(error)
                             this.$message({
@@ -176,6 +179,44 @@
                         })
                     }
                 });
+            },
+            editDebt(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        let amount = Math.round(Number(this.ruleForm.amount) * 100)
+                        this.axios.post('/api/debt/edit', {
+                            'debtId': this.editing,
+                            'groupId': this.groupId,
+                            'name': this.ruleForm.name,
+                            'type': this.ruleForm.type,
+                            'amount': amount,
+                            'date': this.$moment(this.ruleForm.date).format("YYYY-MM-DD")
+                        }).then((response) => {
+                            console.log(response)
+                            this.refresh()
+                            this.$message({
+                                showClose: true,
+                                type: 'success',
+                                message: '已修改'
+                            })
+                            this.clr()
+                        }).catch((error) => {
+                            console.log(error)
+                            this.$message({
+                                showClose: true,
+                                type: 'error',
+                                message: '内部错误'
+                            })
+                        })
+                    }
+                });
+            },
+            clr() {
+                this.editing = 0
+                this.ruleForm.name = null
+                this.ruleForm.type = null
+                this.ruleForm.amount = null
+                this.ruleForm.date = new Date()
             },
             cal() {
                 this.axios.post("/api/debt/cal", {groupId: this.groupId}).then((response) => {
@@ -210,6 +251,18 @@
                         this.refresh()
                     })
                 });
+            },
+            copy(debtInfo) {
+                this.ruleForm.name = debtInfo.name
+                this.ruleForm.type = debtInfo.type
+                this.ruleForm.amount = debtInfo.amount / 100.0
+                this.ruleForm.date = new Date(debtInfo.date)
+                this.editing = 0
+                window.scrollTo(0, 0)
+            },
+            edit(debtInfo) {
+                this.copy(debtInfo)
+                this.editing = debtInfo.debtId
             }
         }
 
