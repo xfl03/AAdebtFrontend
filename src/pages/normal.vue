@@ -58,7 +58,7 @@
                 </el-card>
             </el-main>
             <el-main class="main" style="padding-top: 0">
-                <el-card>
+                <el-card shadow="hover">
                     <el-form>
                         <el-form-item label="筛选器">
                             <el-switch
