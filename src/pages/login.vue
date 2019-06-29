@@ -1,7 +1,7 @@
 <template>
     <el-container class="lite-page">
         <el-header>
-            <span style="font-size: 30px">登录</span>
+            <span style="font-size: 30px">{{title}}</span>
         </el-header>
         <el-main>
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
@@ -31,6 +31,7 @@
         },
         data() {
             return {
+                title:'登录',
                 qaq: null,
                 reg: false,
                 ruleForm: {
@@ -49,12 +50,17 @@
             }
         },
         mounted() {
-            document.title = '登录 - AA记账'
+            this.changeTitle()
         },
         methods: {
+            changeTitle(){
+                document.title = this.title+' - AA记账'
+            },
             login0(formName) {
                 if (this.reg) {
                     this.reg = false;
+                    this.title='登录'
+                    this.changeTitle()
                     return;
                 }
                 this.$refs[formName].validate((valid) => {
@@ -80,6 +86,8 @@
             register0(formName) {
                 if (!this.reg) {
                     this.reg = true;
+                    this.title='注册'
+                    this.changeTitle()
                     return;
                 }
                 this.$refs[formName].validate((valid) => {
